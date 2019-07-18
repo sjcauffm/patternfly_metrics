@@ -17,7 +17,7 @@ components_lower <- do.call(rbind.data.frame, components_lower) ## unlists ouput
 names(components_lower) <- c("component_names") # changed the column name to something more readable
 
 
-##### separating out the names with imports in the name
+##### separating out the names with "import" in the name
 imports_grep <- grep("imports", components_lower$component_names)
 
 names_import <- components_lower[imports_grep,]
@@ -35,6 +35,13 @@ names(imports_split_names) <- c("extra", "component")
 
 imports_split_names$component <- as.character(imports_split_names$component)
 
-split_names2 <- strsplit(imports_split_names$component, "[.]")
-split_names3 <- do.call(rbind.data.frame, split_names2)
-split_names4 <- as.data.frame(split_names2)
+split_names2 <- strsplit(imports_split_names$component, "[.]") ## splits the strings by ".", the brackets are a regex to make R recognize the period. 
+split_names4 <- lapply(split_names2, tail, n = 1L) # the output from split_names2 is in the form of a list of lists with uneven numbers of elements. This command obtains the last subelement of each list element. 
+
+split_names5 <- do.call(rbind.data.frame, split_names4)
+names(split_names5) <- c("component_name")
+
+names_import2 <- cbind(names_import, split_names5)
+
+##### Getting the component names from components without "import" in the name.
+
