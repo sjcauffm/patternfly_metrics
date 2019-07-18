@@ -82,7 +82,3 @@ components_plot <- ggplot(components_trim, aes(x = reorder(component, -imports_p
   
 ggsave("Top_Components.png", components_plot, width = 12, height = 8, units = "in")
   
-
-
-##### Diversity is going to be it's own beast
-diversity <- 
