@@ -3,7 +3,7 @@ library(jsonlite)
 library(googlesheets)
 library(tidyverse)
 
-#### Cleaning PF Data ####
+#### Cleaning PF Data #####
 dir <- setwd("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly-analytics-master/stats")
 
 files <- list.files(path = dir) ### gets the list of JSONs from the directory
