@@ -31,4 +31,10 @@ names_import$names <- as.character(names_import$names)
 imports_split <- strsplit(names_import$names, "react-")
 imports_split_names <- do.call(rbind.data.frame, imports_split)
 
+names(imports_split_names) <- c("extra", "component")
 
+imports_split_names$component <- as.character(imports_split_names$component)
+
+split_names2 <- strsplit(imports_split_names$component, "[.]")
+split_names3 <- do.call(rbind.data.frame, split_names2)
+split_names4 <- as.data.frame(split_names2)
