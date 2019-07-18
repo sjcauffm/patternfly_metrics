@@ -41,6 +41,8 @@ prod_vers_plot <- ggplot(prod_vers2, aes(x = products, y = imports, fill = versi
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, 1000)) +
   labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product and Version", fill = "PatternFly Version")
 
+ggsave("Products_Versions_Plot.png", prod_vers_plot, width = 10, height = 6, units = "in")
+
 ##### Graphing total number of imports by product
 names(products) <- c("product", "imports")
 
@@ -49,6 +51,8 @@ products_plot <- ggplot(products, aes(x = product, y = imports)) +
   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1)) + 
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
   labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product")
+
+ggsave("Product_imports_plot.png", products_plot, width = 10, height = 6, units = "in")
 
 ##### Graphing top components
 names(components_sum) <- c("component", "imports_sum")
@@ -76,7 +80,7 @@ components_plot <- ggplot(components_trim, aes(x = reorder(component, -imports_p
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, 0.03)) +
   labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports")
   
-  
+ggsave("Top_Components.png", components_plot, width = 12, height = 8, units = "in")
   
 
 
