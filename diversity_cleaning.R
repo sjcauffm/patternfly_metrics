@@ -44,4 +44,13 @@ names(split_names5) <- c("component_name")
 names_import2 <- cbind(names_import, split_names5)
 
 ##### Getting the component names from components without "import" in the name.
+names_classes <- components_lower[-imports_grep,]
+names_classes <- names_classes %>%
+  as.data.frame()
 
+names(names_classes) <- c("names")
+
+names_classes$names <- as.character(names_classes$names)
+
+names_split <- strsplit(names_classes$names, "pf") #### Need to rethink this one. 
+names_split2 <- do.call(rbind.data.frame, names_split)
