@@ -13,10 +13,10 @@ component_names <- data$full_component
 components_lower <- component_names %>% ### turns each element of the list to all lower case for easier cleaning
   lapply(tolower)
 
-components_lower$original <- data$full_component
+components_lower <- do.call(rbind.data.frame, components_lower)  ## unlists ouput to a data frame 
 
-components_lower <- do.call(rbind.data.frame, components_lower) ## unlists ouput to a data frame 
-names(components_lower) <- c("component_names") # changed the column name to something more readable
+components_lower$original <- data$full_component
+names(components_lower) <- c("component_names", "full_component") # changed the column name to something more readable
 
 
 ##### separating out the names with "import" in the name
@@ -24,10 +24,9 @@ imports_grep <- grep("imports", components_lower$component_names)
 
 names_import <- components_lower[imports_grep,]
 names_import <- names_import %>%
-  as.character() %>%
   as.data.frame()
 
-names(names_import) <- c("names")
+names(names_import) <- c("names", "full_component")
 names_import$names <- as.character(names_import$names)
 
 imports_split <- strsplit(names_import$names, "react-")
@@ -59,24 +58,21 @@ names_split2 <- lapply(names_split, tail, n = 1L)
 names_split3 <- do.call(rbind.data.frame, names_split2)
 
 names_classes <- cbind(names_classes, names_split3)
-names(names_classes) <- c("names", "component_name")
+names(names_classes) <- c("names", "full_component", "component_name")
 
 ##### combining the names now and adding them to the main data frame. 
 names_combined <- rbind(names_import2, names_classes)
-names(names_combined) <- c("component_names", "component")
+names(names_combined) <- c("component_names", "full_component", "component")
 
+names_trim <- names_combined[,2:3]
 
-
-#data2 <- full_join(data, names_combined, by = "full_component") 
-### The line above does not function like it should, maybe want to try a "for"
-
+##### Need to merge names_trim back with the main data frame in order get the real component names. 
 data2 <- data
-data2$component <- 0
 
-for (i in 1:length(data2$full_component)){
-  if (data2$full_component[i] == names_combined$full_component[i]){
-    data2$component[i] <- names_combined$component[i]
-  } 
-}
 
-data3 <- merge(data, names_combined, by = "full_component")
+
+
+
+
+
+
