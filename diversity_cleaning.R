@@ -11,7 +11,9 @@ data <- gs_read_csv(import)
 ##### need to isolate the component column
 component_names <- data$full_component  
 components_lower <- component_names %>% ### turns each element of the list to all lower case for easier cleaning
-  lapply(tolower) 
+  lapply(tolower)
+
+components_lower$original <- data$full_component
 
 components_lower <- do.call(rbind.data.frame, components_lower) ## unlists ouput to a data frame 
 names(components_lower) <- c("component_names") # changed the column name to something more readable
@@ -61,18 +63,20 @@ names(names_classes) <- c("names", "component_name")
 
 ##### combining the names now and adding them to the main data frame. 
 names_combined <- rbind(names_import2, names_classes)
-names(names_combined) <- c("full_component", "component")
+names(names_combined) <- c("component_names", "component")
+
+
 
 #data2 <- full_join(data, names_combined, by = "full_component") 
-### The line above does not function like it should, maybe want to try a lapply
+### The line above does not function like it should, maybe want to try a "for"
 
 data2 <- data
 data2$component <- 0
 
-for (i in 1:length(data2$component)){
-  if (data2$full_component == names_combined$full_component){
+for (i in 1:length(data2$full_component)){
+  if (data2$full_component[i] == names_combined$full_component[i]){
     data2$component[i] <- names_combined$component[i]
-  }
+  } 
 }
 
-
+data3 <- merge(data, names_combined, by = "full_component")
