@@ -52,5 +52,27 @@ names(names_classes) <- c("names")
 
 names_classes$names <- as.character(names_classes$names)
 
-names_split <- strsplit(names_classes$names, "pf") #### Need to rethink this one. 
-names_split2 <- do.call(rbind.data.frame, names_split)
+names_split <- strsplit(names_classes$names, ".pf-")#### Need to rethink this one. 
+names_split2 <- lapply(names_split, tail, n = 1L)
+names_split3 <- do.call(rbind.data.frame, names_split2)
+
+names_classes <- cbind(names_classes, names_split3)
+names(names_classes) <- c("names", "component_name")
+
+##### combining the names now and adding them to the main data frame. 
+names_combined <- rbind(names_import2, names_classes)
+names(names_combined) <- c("full_component", "component")
+
+#data2 <- full_join(data, names_combined, by = "full_component") 
+### The line above does not function like it should, maybe want to try a lapply
+
+data2 <- data
+data2$component <- 0
+
+for (i in 1:length(data2$component)){
+  if (data2$full_component == names_combined$full_component){
+    data2$component[i] <- names_combined$component[i]
+  }
+}
+
+
