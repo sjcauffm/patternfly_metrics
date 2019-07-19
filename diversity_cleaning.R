@@ -58,6 +58,8 @@ names_trim$full_component <- as.character(names_trim$full_component)
 data2 <- data
 data3 <- full_join(data2, names_trim, by = c("full_component", "product"))
 
+save(data3 , file = "patternfly_adoption_current.rda")
+
 
 
 
