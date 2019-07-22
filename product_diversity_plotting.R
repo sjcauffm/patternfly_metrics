@@ -21,6 +21,20 @@ data3$is_component <- comparison
 
 pf_data <- data3[which(data3$is_component == TRUE),]
 
+#Need to re-clean some of the component name data. 
+unclean <- data3[which(data3$is_component == FALSE),]
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
 save(pf_data, file = "patternfly_adoption_final.rda")
 
 ##### graphing product diversity
