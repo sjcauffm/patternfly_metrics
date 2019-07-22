@@ -4,8 +4,7 @@ library(ggplot2)
 library(psych)
 library(ggthemes)
 
-gs_auth()
-import <- gs_title("patternfly_adoption")
+load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
 
 data <- gs_read_csv(import) ### Imports data to a dataframe
 
