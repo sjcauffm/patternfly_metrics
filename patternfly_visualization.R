@@ -19,6 +19,7 @@ prod_vers_plot <- ggplot(products_versions, aes(x = products, y = imports, fill 
   geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() +
   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1)) + 
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200)) +
+  scale_fill_manual(values = c("PatternFly 3" = "#72767B", "PatternFly 4" = "#0066CC")) +
   labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product and Version", fill = "PatternFly Version")
 
 ggsave("Products_Versions_Plot.png", prod_vers_plot, width = 10, height = 6, units = "in")
@@ -58,8 +59,8 @@ components_plot <- ggplot(components_sum, aes(x = reorder(component, -imports_pr
                                               width = .5) +
   theme_tufte() +
   theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1)) + 
-  scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .185)) +
+  scale_x_discrete(expand = c(0, 0), labels = components_sum$component) + scale_y_continuous(expand = c(0, 0), limits = c(0, .185)) +
   labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports")
   
-ggsave("Top_Components.png", components_plot, width = 12, height = 8, units = "in")
+ggsave("Top_Components.png", components_plot, width = 24, height = 16, units = "in")
   
