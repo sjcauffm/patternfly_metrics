@@ -4,6 +4,7 @@ library(ggplot2)
 library(psych)
 library(ggthemes)
 library(showtext)
+library(sysfonts)
 
 setwd("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics")
 load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
@@ -22,7 +23,7 @@ redhat <- font_add("redhat", "RedHatText-Regular.ttf")
 ##### Graphing Products and Versions
 prod_vers_plot <- ggplot(products_versions, aes(x = products, y = imports, fill = version)) +
   geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() +
-  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1)) + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1, family = "redhat")) + 
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200)) +
   scale_fill_manual(values = c("PatternFly 3" = "#72767B", "PatternFly 4" = "#0066CC")) +
   labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product and Version", fill = "PatternFly Version")
