@@ -3,7 +3,9 @@ library(tidyverse)
 library(ggplot2)
 library(psych)
 library(ggthemes)
+library(showtext)
 
+setwd("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics")
 load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
 
 components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component_name), FUN = sum)
@@ -13,6 +15,9 @@ versions <- aggregate.data.frame(pf_data$imports, by = list(pf_data$version_grep
 products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version_grep), FUN = sum) ## counts the number of imports by each product for each patternfly version
 
 names(products_versions) <- c("products", "version", "imports")
+
+##### Importing Red Hat Font
+redhat <- font_add("redhat", "RedHatText-Regular.ttf")
 
 ##### Graphing Products and Versions
 prod_vers_plot <- ggplot(products_versions, aes(x = products, y = imports, fill = version)) +
