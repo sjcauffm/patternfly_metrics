@@ -33,7 +33,7 @@ dfc <- map_df(files, function(i) {
   
   df$product <- r_name #keep product name from file name
   
-  df <- rownames_to_column(df) #get list definitions to row
+  df <- rownames_to_column(df) #get ldist definitions to row
   
   df
 })
