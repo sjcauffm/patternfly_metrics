@@ -35,7 +35,8 @@ names(products) <- c("product", "imports")
 
 products_plot <- ggplot(products, aes(x = product, y = imports)) +
   geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() +
-  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1)) + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) + 
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200)) +
   labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product")
 
@@ -64,7 +65,8 @@ components_plot <- ggplot(components_sum, aes(x = reorder(component, -imports_pr
                                               ymax = components_sum$imports_prop + components_sum$margin_error, 
                                               width = .5) +
   theme_tufte() +
-  theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1)) + 
+  theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) + 
   scale_x_discrete(expand = c(0, 0), labels = components_sum$component) + scale_y_continuous(expand = c(0, 0), limits = c(0, .185)) +
   labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports")
   
