@@ -32,7 +32,8 @@ names(diversity_df) <- c("product", "components")
 
 div_plot <- ggplot(diversity_df, aes(x = reorder(product, -components), y = components)) +
   geom_bar(stat = "identity") + theme_tufte() + 
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) + 
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,40)) +
   labs(x = "Product", y = "Number of PF Components", title = "Number of PF Components Used by Each Product")
 
