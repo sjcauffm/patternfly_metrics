@@ -8,11 +8,11 @@ library(extrafont)
 setwd("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics")
 load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
 
-components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component_name), FUN = sum)
-components_mean <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component_name), FUN = mean) ## counts the sum of imports for each component
+components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = sum)
+components_mean <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = mean) ## counts the sum of imports for each component
 products <- aggregate.data.frame(pf_data$imports, by = list(pf_data$product), FUN = sum) ## counts the sum of imports for each product, gives total imports for each product
-versions <- aggregate.data.frame(pf_data$imports, by = list(pf_data$version_grep), FUN = sum) ## counts the number of imports by patternfly version
-products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version_grep), FUN = sum) ## counts the number of imports by each product for each patternfly version
+versions <- aggregate.data.frame(pf_data$imports, by = list(pf_data$version), FUN = sum) ## counts the number of imports by patternfly version
+products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version), FUN = sum) ## counts the number of imports by each product for each patternfly version
 
 names(products_versions) <- c("products", "version", "imports")
 
@@ -26,7 +26,8 @@ prod_vers_plot <- ggplot(products_versions, aes(x = products, y = imports, fill 
         text = element_text(family = "Red Hat Display")) +
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200)) +
   scale_fill_manual(values = c("PatternFly 3" = "#72767B", "PatternFly 4" = "#0066CC")) +
-  labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product and Version", fill = "PatternFly Version")
+  labs(x = "Product", y = "Imports", 
+       title = "Total Imports of PatternFly Components by Product and Version", fill = "PatternFly Version")
 
 ggsave("Products_Versions_Plot.png", prod_vers_plot, width = 10, height = 6, units = "in")
 
