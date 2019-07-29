@@ -53,12 +53,13 @@ names(names_combined) <- c("component_names", "full_component", "component")
 
 names_trim <- names_combined[,c(1:2,4)]
 names_trim$full_component <- as.character(names_trim$full_component)
+names(names_trim) <- c("full_component", "product", "component")
 
 ##### Need to merge names_trim back with the main data frame in order get the real component names. 
 data2 <- data
 data3 <- full_join(data2, names_trim, by = c("full_component", "product"))
 
-save(data3 , file = "patternfly_adoption_current.rda")
+save(data3 , file = "/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_current.rda")
 
 
 
