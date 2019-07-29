@@ -25,7 +25,8 @@ comparison <- data3$component %in% pf_list$Component
 data3$is_component <- comparison
 
 pf_data <- data3[which(data3$is_component == TRUE),]
-save(pf_data, file = "patternfly_adoption_final.rda")
+save(pf_data, 
+     file = "/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
 
 ##### graphing product diversity
 
@@ -45,7 +46,7 @@ div_plot <- ggplot(diversity_df, aes(x = reorder(product, -components), y = comp
 ggsave("diversity_plot.png", div_plot, height = 6, width = 10, units = "in")
 
 ##### Graphing Change in Diversity
-diversity_trend <- aggregate(pf_data$product, by = list(pf_data$date), FUN = 
+diversity_trend <- count(pf_data$product, vars = c(pf_data$date)) 
 
 div_trend <- ggplot()
 
