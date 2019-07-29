@@ -4,11 +4,10 @@ library(googlesheets)
 library(tidyverse)
 
 #### Cleaning PF Data #####
-dir <- setwd("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly-analytics-master/stats")
+dir <- setwd("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/data")
 
 files <- list.files(path = dir) ### gets the list of JSONs from the directory
-files <- files[c(1:13,15:21)] ### Gets rid of a file that is not a JSON
-
+files <- files[c(1:24,26:40)] ### Gets rid of a file that is not a JSON
 import <- lapply(files, fromJSON) ### reads data from all JSONs in directory to a list
 
 dfc <- map_df(files, function(i) {
@@ -21,7 +20,7 @@ dfc <- map_df(files, function(i) {
   r_name <- gsub("\\.json","",r_name)
   
   #define file path based on file name and wd
-  file_path <- paste0("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly-analytics-master/stats/"
+  file_path <- paste0("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/data/"
                       ,files)
   
   #connect json file
@@ -67,7 +66,7 @@ for(i in 1:length(dfc5$version_grep)){
   }
 }
 
-write.csv(dfc5, file = "patternfly_adoption")
+write.csv(dfc5, file = "~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption.csv")
 
 
 
