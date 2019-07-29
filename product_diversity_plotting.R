@@ -7,14 +7,6 @@ library(ggthemes)
 load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_data.rda") #loads data file from shared drive
 
 ##### need to obtain the number of unique elemements per product. This can probably be done by getting the number of rows per product.
-data3$date <- as.character(data3$date) ## makes it easier to grep
-current <- grep("2019-07-26", data3$date) ## provides a vector of all rows with current data
-
-diversity <- data3[current,] ### subsets by the current data
-
-diversity <- table(data3$product)
-diversity2 <- as.data.frame(diversity)
-
 import <- gs_title("PatternFly Components")
 pf_list <- gs_read_csv(import)
 
@@ -31,13 +23,14 @@ save(pf_data,
 ##### graphing product diversity
 
 ## USE "patternfly_adoption_final.rda" for graphing. It has is limited to only components that are from the PatternFly Library ##
+current <- grep("2019-07-26", pf_data$date)
+diversity <- pf_data[current,]
 
-diversity <- table(pf_data$product)
-diversity_df <- as.data.frame(diversity)
+diversity_df <- as.data.frame(table(diversity$product))
 names(diversity_df) <- c("product", "components")
 
 div_plot <- ggplot(diversity_df, aes(x = reorder(product, -components), y = components)) +
-  geom_bar(stat = "identity") + theme_tufte() + 
+  geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
         text = element_text(family = "Red Hat Display")) + 
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,40)) +
