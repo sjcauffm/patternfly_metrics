@@ -23,6 +23,8 @@ save(pf_data,
 ##### graphing product diversity
 
 ## USE "patternfly_adoption_final.rda" for graphing. It has is limited to only components that are from the PatternFly Library ##
+load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
+
 current <- grep("2019-07-26", pf_data$date)
 diversity <- pf_data[current,]
 
@@ -39,8 +41,6 @@ div_plot <- ggplot(diversity_df, aes(x = reorder(product, -components), y = comp
 ggsave("diversity_plot.png", div_plot, height = 6, width = 10, units = "in")
 
 ##### Graphing Change in Diversity
-diversity_trend <- count(pf_data$product, vars = c(pf_data$date)) 
-
 div_trend <- ggplot()
 
 
