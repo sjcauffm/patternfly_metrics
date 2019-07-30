@@ -40,7 +40,40 @@ div_plot <- ggplot(diversity_df, aes(x = reorder(product, -components), y = comp
 
 ggsave("diversity_plot.png", div_plot, height = 6, width = 10, units = "in")
 
+## Need to get the dates without the times. 
+
+dates <- strsplit(as.character(pf_data$date), "\\s+")
+dates2 <- do.call(rbind.data.frame, dates)
+names(dates2) <- c("date", "time")
+
+pf_data$date <- dates2$date
+save(pf_data, file = "/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
+
+
 ##### Graphing Change in Diversity
-div_trend <- ggplot()
+trends <- as.data.frame(table(pf_data$product, pf_data$date))
+names(trends) <- c("product", "date", "diversity")
+
+div_trend <- ggplot(trends, aes(x = date, y = diversity, group = product, color = product)) +
+  geom_line(stat = "identity") + theme_tufte() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) + scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,40)) +
+  labs(x = "Date", y = "PF Diversity (number of PF components added to product)", title = "Diversity of PF Components Over Time by Product", color = "Product")
+
+ggsave("diversity_trend_plot.png", div_trend, height = 10, width = 14, units = "in")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
