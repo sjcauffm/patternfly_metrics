@@ -31,11 +31,10 @@ components_trend_bar <- ggplot(components, aes(x = component, y = imports, fill 
 
 ### Trying some faceting
 components_trend_facet<- ggplot(components, aes(x = date, y = imports, group = as.factor(component))) +
-  geom_line() + theme_linedraw() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1),
+  geom_point(color = "#0066CC") + geom_line(color = "#72767B") + theme_linedraw() +
+  theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
         text = element_text(family = "Red Hat Display")) + 
-  scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, 275)) +
-  facet_wrap(~component) +
+  scale_y_continuous(limits = c(0, 275)) + facet_wrap(~component) +
   labs(x = "Date", y = "Number of Imports", title = "Number of Imports for PF Components Over Time")
 
 ggsave(filename = "components_over_time.png", components_trend_facet, height = 12, width = 20, units = "in")
@@ -63,15 +62,28 @@ names(temp) <- c("date", "extra")
 products$date <- temp$date
 
 
-products_trends <- ggplot(products, aes(x = date, y = import, fill = portfolio)) +
-  geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_linedraw() + facet_wrap(~products$product) +
+products_trends <- ggplot(products, aes(x = date, y = import, group = portfolio, color = portfolio)) +
+  geom_point() + geom_line(stat = "identity") + theme_linedraw() + facet_wrap(~products$product) +
   theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
         text = element_text(family = "Red Hat Display")) +
-  scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, 250)) +
-  scale_fill_manual(values = c("#73BCF7" ,"#72767B", "#0066CC")) +
-  labs(x = "Product", y = "Imports", title = "Imports of PatternFly Components by Product Over Time", fill = "Portfolio")
+  scale_y_continuous(limits = c(0, 250)) +
+  scale_color_manual(values = c("#73BCF7" ,"#72767B", "#0066CC")) +
+  labs(x = "Date", y = "Imports", title = "Imports of PatternFly Components by Product Over Time", color = "Portfolio")
 
+ggsave(filename = "products_over_time.png", products_trends, height = 12, width = 20, units = "in")
 
+#### Graphing Versions by Product Over Time ####
+products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version, pf_data$date), FUN = sum)
+names(products_versions) <- c("product", "version", "date", "imports")
+
+prod_vers_trend <- ggplot(products_versions, aes(x = date, y = imports, group = version, color = version)) +
+  geom_point() + geom_line(stat = "identity") + facet_wrap(~products_versions$product) + theme_linedraw() +
+  theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) + scale_y_continuous(limits = c(0, 250)) + 
+  scale_color_manual(values = c("#72767B", "#0066CC")) +
+  labs(x = "Date", y = "Imports", title = "Imports of PatternFly Components by Product Over Time", color = "PatternFly Version")
+  
+ggsave(filename = "prod_vers_over_time.png", prod_vers_trend, height = 12, width = 20, units = "in")
 
 
 
