@@ -42,22 +42,35 @@ ggsave(filename = "components_over_time.png", components_trend_facet, height = 1
 
 ##### Graphing product trends over time. ####
 products <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$date), FUN = sum)
-names(products) <- c("product", "data", "import")
+names(products) <- c("product", "date", "import")
 products$portfolio <- 0
 for (i in 1:length(products$portfolio)){
-  if(products$product[i] == "3scale" || products$product[i] == "AMQ_Everything_Else" || products$product[i] == "AMQ_Streams" || products$product[i] == "Fuse_Online" ||
-     products$product[i] == "Fuse_Online_React" || products$product[i] == "Integreatly" || products$product[i] == "Kiali_App" || products$product[i] == "Mobile_Dev_Consle"){
+  if(products$product[i] == "3scale" | products$product[i] == "AMQ_Everything_Else" | products$product[i] == "AMQ_Streams" | products$product[i] == "Fuse_Online" |
+     products$product[i] == "Fuse_Online_React" | products$product[i] == "Integreatly" | products$product[i] == "Kiali_App" | products$product[i] == "Mobile_Dev_Consle"){
     products$portfolio[i] <- "Cloud Native"
-  } else if (products$product[i] == "Ansible" || products$product[i] == "Cloud_Meter" || products$product[i] == "Cost_Management" || products$product[i] == "Insights_Frontend" ||
-             products$product[i] <- "Insights_Library") {
+  } else if (products$product[i] == "Ansible" | products$product[i] == "Cloud_Meter" | products$product[i] == "Cost_Management" | products$product[i] == "Insights_Frontend" |
+             products$product[i] == "Insights_Library") {
     products$portfolio[i] <- "Management and Automation"
   } else {
-    product$portfolio[i] <- "Hybrid Cloud Infrastructure"
+    products$portfolio[i] <- "Hybrid Cloud Infrastructure"
   }
-} 
+}
+
+## going to merge june dates to so it representes one month
+temp <- strsplit(as.character(products$date), "-2")
+temp <- do.call(rbind.data.frame, temp)
+names(temp) <- c("date", "extra")
+products$date <- temp$date
 
 
-products_trends <- ggplot(products, aes(x = date, y = imports, group = product))
+products_trends <- ggplot(products, aes(x = date, y = import, fill = portfolio)) +
+  geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_linedraw() + facet_wrap(~products$product) +
+  theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) +
+  scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, 250)) +
+  scale_fill_manual(values = c("#73BCF7" ,"#72767B", "#0066CC")) +
+  labs(x = "Product", y = "Imports", title = "Imports of PatternFly Components by Product Over Time", fill = "Portfolio")
+
 
 
 
