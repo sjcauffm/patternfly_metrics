@@ -54,13 +54,14 @@ save(pf_data, file = "/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User
 trends <- as.data.frame(table(pf_data$product, pf_data$date))
 names(trends) <- c("product", "date", "diversity")
 
-div_trend <- ggplot(trends, aes(x = date, y = diversity, group = product, color = product)) +
-  geom_line(stat = "identity") + theme_tufte() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+div_trend <- ggplot(trends, aes(x = date, y = diversity, group = product)) +
+  geom_line(stat = "identity") + theme_linedraw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1),
         text = element_text(family = "Red Hat Display")) + scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,40)) +
-  labs(x = "Date", y = "PF Diversity (number of PF components added to product)", title = "Diversity of PF Components Over Time by Product", color = "Product")
+  labs(x = "Date", y = "PF Diversity (number of PF components added to product)", title = "Diversity of PF Components Over Time by Product", color = "Product") +
+  facet_wrap(~product)
 
-ggsave("diversity_trend_plot.png", div_trend, height = 10, width = 14, units = "in")
+ggsave("diversity_trend_plot.png", div_trend, height = 12, width = 20, units = "in")
 
 
 
