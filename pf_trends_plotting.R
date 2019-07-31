@@ -40,5 +40,30 @@ components_trend_facet<- ggplot(components, aes(x = date, y = imports, group = a
 
 ggsave(filename = "components_over_time.png", components_trend_facet, height = 12, width = 20, units = "in")
 
-##### Graphing product trens over time. ####
+##### Graphing product trends over time. ####
+products <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$date), FUN = sum)
+names(products) <- c("product", "data", "import")
+products$portfolio <- 0
+for (i in 1:length(products$portfolio)){
+  if(products$product[i] == "3scale" || products$product[i] == "AMQ_Everything_Else" || products$product[i] == "AMQ_Streams" || products$product[i] == "Fuse_Online" ||
+     products$product[i] == "Fuse_Online_React" || products$product[i] == "Integreatly" || products$product[i] == "Kiali_App" || products$product[i] == "Mobile_Dev_Consle"){
+    products$portfolio[i] <- "Cloud Native"
+  } else if (products$product[i] == "Ansible" || products$product[i] == "Cloud_Meter" || products$product[i] == "Cost_Management" || products$product[i] == "Insights_Frontend" ||
+             products$product[i] <- "Insights_Library") {
+    products$portfolio[i] <- "Management and Automation"
+  } else {
+    product$portfolio[i] <- "Hybrid Cloud Infrastructure"
+  }
+} 
+
+
+products_trends <- ggplot(products, aes(x = date, y = imports, group = product))
+
+
+
+
+
+
+
+
 
