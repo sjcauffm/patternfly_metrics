@@ -70,7 +70,7 @@ products_trends <- ggplot(products, aes(x = date, y = import, group = portfolio,
   scale_color_manual(values = c("#73BCF7" ,"#72767B", "#0066CC")) +
   labs(x = "Date", y = "Imports", title = "Imports of PatternFly Components by Product Over Time", color = "Portfolio")
 
-ggsave(filename = "products_over_time.png", products_trends, height = 12, width = 20, units = "in")
+ggsave(filename = "products_over_time.png", products_trends, height = 12, width = 20, units = "in")a
 
 #### Graphing Versions by Product Over Time ####
 products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version, pf_data$date), FUN = sum)
