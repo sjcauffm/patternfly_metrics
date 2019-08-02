@@ -8,7 +8,7 @@ library(extrafont)
 setwd("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics")
 load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
 
-components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = sum)
+components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component, pf_data$date), FUN = sum)
 components_mean <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = mean) ## counts the sum of imports for each component
 products <- aggregate.data.frame(pf_data$imports, by = list(pf_data$product), FUN = sum) ## counts the sum of imports for each product, gives total imports for each product
 versions <- aggregate.data.frame(pf_data$imports, by = list(pf_data$version), FUN = sum) ## counts the number of imports by patternfly version
@@ -72,6 +72,23 @@ components_plot <- ggplot(components_sum, aes(x = reorder(component, -imports_pr
   labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports")
   
 ggsave("Top_Components.png", components_plot, width = 24, height = 16, units = "in")
+
+
+##### Graphing Most recent component totals ####
+names(components_sum) <- c("component", "date", "imports") 
+temp <- strsplit(as.character(components_sum$date), "-2")
+temp <- do.call(rbind.data.frame, temp)
+names(temp) <- c("date", "extra")
+components_sum$date <- temp$date
+
+component_totals <- ggplot(components_sum, aes(x = component, y = imports, fill = date)) +
+  geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_tufte() +
+  scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,300), 
+                                                          breaks = c(0,50,100,150,200,250,300)) +
+  scale_fill_manual(values = c("2019-06" = "#72767B", "2019-07" = "#0066CC")) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) +
+  labs(x = "Component", y = "Total Number of Imports", title = "Number of Component Imports per Month", fill = "Date")
 
 
 ##### Splitting the products by portfolio membership. #####
