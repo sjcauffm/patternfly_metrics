@@ -70,7 +70,7 @@ components_plot <- ggplot(components_totals, aes(x = reorder(component, -imports
   theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
         text = element_text(family = "Red Hat Display")) + 
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .2)) +
-  labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019")
+  labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019") ## Update the date as needed. 
   
 ggsave("Top_Components.png", components_plot, width = 24, height = 16, units = "in")
 
@@ -82,7 +82,7 @@ temp <- do.call(rbind.data.frame, temp)
 names(temp) <- c("date", "extra")
 components_sum$date <- temp$date
 
-component_totals <- ggplot(components_sum, aes(x = component, y = imports, fill = date)) +
+component_totals_plot <- ggplot(components_sum, aes(x = component, y = imports, fill = date)) +
   geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_tufte() +
   scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,300), 
                                                           breaks = c(0,50,100,150,200,250,300)) +
@@ -91,7 +91,7 @@ component_totals <- ggplot(components_sum, aes(x = component, y = imports, fill 
         text = element_text(family = "Red Hat Display")) +
   labs(x = "Component", y = "Total Number of Imports", title = "Number of Component Imports per Month", fill = "Date")
 
-ggsave(filename = "component_totals.png", component_totals, height = 12, width = 20, units = "in")
+ggsave(filename = "component_totals.png", component_totals_plot, height = 12, width = 20, units = "in")
 
 
 ##### Splitting the products by portfolio membership. #####
