@@ -1,6 +1,10 @@
 library(shiny)
 library(shinydashboard)
+library(ggplot2)
+library(ggthemes)
 library(rsconnect)
+
+load("patternfly_adoption_final.rda")
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage( # creates the dashboard layout
@@ -18,7 +22,7 @@ ui <- dashboardPage( # creates the dashboard layout
       tabItems(
         tabItem(tabName = "Components"),
         tabItem(tabName ="top",
-                h3("Top Components"),
+                h1("Top Components"),
                 p("This plot shows each component as a proportion of the total number of imports for all components. It reflects how popular each component is.
                   Proportions are used here so that we can calculate confidence intervals using the adjusted Wald technique. With confidence intervals we can determine if some components
                   are statistically more popular than others."),
@@ -27,7 +31,7 @@ ui <- dashboardPage( # creates the dashboard layout
                   plotOutput("top_components")
                      )),
         tabItem(tabName = "totals",
-                h3("Components Totals"),
+                h1("Components Totals"),
                 p("This plot shows the total number of component imports split by date."),
                 fluidRow(
                   plotOutput("totals")
@@ -40,7 +44,6 @@ ui <- dashboardPage( # creates the dashboard layout
 server <- function(input, output) {
   
   top_data <- reactive({
-    load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_dashboard/patternfly_adoption_final.rda")
     components_totals <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = sum)
     components_mean <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = mean)
     names(components_totals) <- c("component", "imports_sum")
@@ -57,7 +60,6 @@ server <- function(input, output) {
   })
   
   components <- reactive({
-    load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_dashboard/patternfly_adoption_final.rda")
     components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component, pf_data$date), FUN = sum)
     names(components_sum) <- c("component", "date", "imports") 
     temp <- strsplit(as.character(components_sum$date), "-2")
