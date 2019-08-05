@@ -15,7 +15,10 @@ ui <- dashboardPage( # creates the dashboard layout
       menuItem("Component Data", tabName = "Components",
                menuSubItem("Top Components", tabName = "top"),
                menuSubItem("Component Totals", tabName = "totals")), # edits the dashboard sidebar. allows for menuItems and menuSubitems
-      menuItem("Product Data", tabName = "Products"),
+      menuItem("Product Data", tabName = "Products",
+               menuSubItem("Component Diversity Current", tabName = "diverse"),
+               menuSubItem("Component Diversity Trends", tabName = "divtrend"),
+               menuSubItem("Product Imports of Components", tabName = "products_port")),
       menuItem("Raw Data", tabName = "Raw Data"))),
    
      dashboardBody( # edits the body of the dashboard.
@@ -37,6 +40,26 @@ ui <- dashboardPage( # creates the dashboard layout
                   plotOutput("totals")
                      )),
         tabItem(tabName = "Products"),
+        tabItem(tabName = "diverse",
+                h1("Diversity of Components Used by Each Product"),
+                p("This plot shows the number of unique PatternFly components being used by each product within the Red Hat portfolio."),
+                fluidRow(
+                  plotOutput("diversity")
+                )),
+        tabItem(tabName = "divtrend",
+                h1("Changes in Diversity of PF Components for Each Product Over Time"),
+                p("This plot displays the changes in the number of unique PatternFly components over time."),
+                fluidRow(
+                  plotOutput("div_trend")
+                )),
+        tabItem(tabName = "products_port",
+                h1("Changes in the Number of Imports by Each Product Over Time"),
+                p("This plot shows the change in the number of imports of PatternFly components over time. This differs from diversity because diversity shows us the number of unique imports each
+                  product uses, while the number of imports gives us an idea of how much products are implementing the components they are importing. Gathering both metrics gives us a more complete
+                  picture of PatternFly usage across the Red Hat Portfolio."),
+                fluidRow(
+                  plotOutput("prod_port")
+                )),
         tabItem(tabName = "Raw Data"))
 )
 )
@@ -69,6 +92,43 @@ server <- function(input, output) {
     components_sum
   })
   
+  diversity <- reactive({
+    current <- grep("2019-07-26", pf_data$date)
+    diversity <- pf_data[current,]
+    
+    diversity_df <- as.data.frame(table(diversity$product))
+    names(diversity_df) <- c("product", "components")
+    diversity_df
+  })
+  
+  div_trend <- reactive({
+    trends <- as.data.frame(table(pf_data$product, pf_data$date))
+    names(trends) <- c("product", "date", "diversity")
+    trends
+  })
+  
+  products_portfolios <- reactive({
+    products <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$date), FUN = sum)
+    names(products) <- c("product", "date", "import")
+    products$portfolio <- 0
+    for (i in 1:length(products$portfolio)){
+      if(products$product[i] == "3scale" | products$product[i] == "AMQ_Everything_Else" | products$product[i] == "AMQ_Streams" | products$product[i] == "Fuse_Online" |
+         products$product[i] == "Fuse_Online_React" | products$product[i] == "Integreatly" | products$product[i] == "Kiali_App" | products$product[i] == "Mobile_Dev_Consle"){
+        products$portfolio[i] <- "Cloud Native"
+      } else if (products$product[i] == "Ansible" | products$product[i] == "Cloud_Meter" | products$product[i] == "Cost_Management" | products$product[i] == "Insights_Frontend" |
+                 products$product[i] == "Insights_Library") {
+        products$portfolio[i] <- "Management and Automation"
+      } else {
+        products$portfolio[i] <- "Hybrid Cloud Infrastructure"
+      }
+    }
+    temp <- strsplit(as.character(products$date), "-2")
+    temp <- do.call(rbind.data.frame, temp)
+    names(temp) <- c("date", "extra")
+    products$date <- temp$date
+    products
+  })
+  
   
   output$totals <- renderPlot({
     ggplot(components(), aes(x = component, y = imports, fill = date)) +
@@ -91,8 +151,34 @@ server <- function(input, output) {
     theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
           text = element_text(family = "Red Hat Display")) + 
     scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .2)) +
-    labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019") ## Update the date as needed.
-})
+    labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019")}) ## Update the date as needed.
+    
+    
+  output$diversity <-  renderPlot({ggplot(diversity(), aes(x = reorder(product, -components), y = components)) +
+    geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() + 
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+          text = element_text(family = "Red Hat Display")) + 
+    scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,40)) +
+    labs(x = "Product", y = "Number of PF Components", title = "Number of PF Components Used by Each Product")})
+  
+  output$div_trend <- renderPlot({ggplot(div_trend(), aes(x = date, y = diversity, group = product)) +
+    geom_line(stat = "identity") + geom_point() + theme_linedraw() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 1),
+          text = element_text(family = "Red Hat Display")) + scale_y_continuous(limits = c(0,40)) +
+    labs(x = "Date", y = "PF Diversity (number of PF components added to product)", title = "Diversity of PF Components Over Time by Product", color = "Product") +
+    facet_wrap(~product)
+  })
+  
+  output$prod_port <- renderPlot({
+    ggplot(products_portfolios(), aes(x = product, y = import, fill = portfolio)) +
+      geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() +
+      theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1), 
+            text = element_text(family = "Red Hat Display")) +
+      scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200)) +
+      scale_fill_manual(values = c("Cloud Native" = "#73BCF7" , "Hybrid CLoud Infrastructure" = "#72767B", "Management and Automation" = "#0066CC")) +
+      labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product")
+  })
+
 }
 
 # Run the application 
