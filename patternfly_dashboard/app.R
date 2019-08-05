@@ -28,17 +28,24 @@ ui <- dashboardPage( # creates the dashboard layout
       tabItems(
         tabItem(tabName = "Components"),
         tabItem(tabName ="top",
+                h3("Top Components"),
+                p("This plot shows each component as a proportion of the total number of imports for all components. It reflects how popular each component is.
+                  Proportions are used here so that we can calculate confidence intervals using the adjusted Wald technique. With confidence intervals we can determine if some components
+                  are statistically more popular than others."),
+                p("The general rule is if the error bars for each bar don't touch, then the difference is statistically signficiant."),
                 fluidRow(
                   plotOutput("top_components")
                      )),
         tabItem(tabName = "totals",
+                h3("Components Totals"),
+                p("This plot shows the total number of component imports split by date."),
                 fluidRow(
                   plotOutput("totals")
                      )),
         tabItem(tabName = "Products"),
         tabItem(tabName = "Raw Data"))
-      )
-    )
+)
+)
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
