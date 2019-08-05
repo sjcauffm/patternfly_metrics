@@ -1,16 +1,6 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(shinydashboard)
-
-load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
+library(rsconnect)
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage( # creates the dashboard layout
@@ -50,7 +40,7 @@ ui <- dashboardPage( # creates the dashboard layout
 server <- function(input, output) {
   
   top_data <- reactive({
-    load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
+    load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_dashboard/patternfly_adoption_final.rda")
     components_totals <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = sum)
     components_mean <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = mean)
     names(components_totals) <- c("component", "imports_sum")
@@ -67,7 +57,7 @@ server <- function(input, output) {
   })
   
   components <- reactive({
-    load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
+    load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_dashboard/patternfly_adoption_final.rda")
     components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component, pf_data$date), FUN = sum)
     names(components_sum) <- c("component", "date", "imports") 
     temp <- strsplit(as.character(components_sum$date), "-2")
