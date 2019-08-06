@@ -12,6 +12,7 @@ ui <- dashboardPage( # creates the dashboard layout
     
     dashboardSidebar(
       sidebarMenu(
+      menuItem("Home", tabName = "homepage")
       menuItem("Component Data", tabName = "Components",
                menuSubItem("Top Components", tabName = "top"),
                menuSubItem("Component Totals", tabName = "totals")), # edits the dashboard sidebar. allows for menuItems and menuSubitems
@@ -24,6 +25,11 @@ ui <- dashboardPage( # creates the dashboard layout
    
      dashboardBody( # edits the body of the dashboard.
       tabItems(
+        tabItem(tabName = "homepage",
+                h1("PatternFly Adoption Metrics and Trends"),
+                p("This dashboard displays the usage of PatternFly components across the Red Hat portfolio. the sections are divided by metrics associated with components themselves and the products within 
+                  the portfolio. Feel free to click through and see how PF is being used!"),
+                p("NOTE: Due to the nature of product development at Red Hat, this dashboard does not possess data for every single product yet. It will be updated as we obtain more data. ")),
         tabItem(tabName = "Components"),
         tabItem(tabName ="top",
                 h1("Top Components"),
@@ -66,7 +72,7 @@ ui <- dashboardPage( # creates the dashboard layout
                 p("This plot is similar to the trends on overall product imports plot, but here the data is broken down by the number of imports for both versions of PatternFly. This gives us a
                   sense of how products are adopting or converting to PatternFly 4 over PatternFly 3."),
                 fluidRow(
-                  box(plotOutput("prod_vers"))
+                  plotOutput("prod_vers")
                 )),
         tabItem(tabName = "Raw Data"))
 )
