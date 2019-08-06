@@ -130,6 +130,8 @@ server <- function(input, output) {
   })
   
   
+  
+  
   output$totals <- renderPlot({
     ggplot(components(), aes(x = component, y = imports, fill = date)) +
     geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_tufte() +
@@ -170,13 +172,14 @@ server <- function(input, output) {
   })
   
   output$prod_port <- renderPlot({
-    ggplot(products_portfolios(), aes(x = product, y = import, fill = portfolio)) +
-      geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() +
-      theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1), 
+    ggplot(products_portfolios(), aes(x = date, y = import, group = portfolio, color = portfolio)) +
+      geom_point() + geom_line(stat = "identity") + theme_linedraw() + facet_wrap(~products$product) +
+      theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
             text = element_text(family = "Red Hat Display")) +
-      scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200)) +
-      scale_fill_manual(values = c("Cloud Native" = "#73BCF7" , "Hybrid CLoud Infrastructure" = "#72767B", "Management and Automation" = "#0066CC")) +
-      labs(x = "Product", y = "Imports", title = "Total Imports of PatternFly Components by Product")
+      scale_y_continuous(limits = c(0, 250)) +
+      scale_color_manual(values = c("#73BCF7" ,"#72767B", "#0066CC")) +
+      labs(x = "Date", y = "Imports", 
+           title = "Imports of PatternFly Components by Product Over Time", color = "Portfolio")
   })
 
 }
