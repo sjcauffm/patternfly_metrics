@@ -193,7 +193,7 @@ server <- function(input, output) {
   output$prod_port <- renderPlot({
     ggplot(products_portfolios(), aes(x = date, y = import, group = portfolio, color = portfolio)) +
       geom_point() + geom_line(stat = "identity") + theme_linedraw() + 
-      facet_wrap(~product_portfolios()$product) +
+      facet_wrap(~products_portfolios()$product) +
       theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
             text = element_text(family = "Red Hat Display")) +
       scale_y_continuous(limits = c(0, 250)) +
