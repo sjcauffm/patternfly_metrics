@@ -4,7 +4,7 @@ library(googlesheets)
 library(ggthemes)
 
 ##### Plotting diversity of components for patternfly data. 
-load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_data.rda") #loads data file from shared drive
+load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_current.rda") #loads data file from shared drive
 
 ##### need to obtain the number of unique elemements per product. This can probably be done by getting the number of rows per product.
 import <- gs_title("PatternFly Components")
