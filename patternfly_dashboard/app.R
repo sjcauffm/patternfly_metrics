@@ -4,6 +4,8 @@ library(ggplot2)
 library(ggthemes)
 library(rsconnect)
 
+### set working directory if it is not already set to this path. 
+setwd("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_dashboard")
 load("patternfly_adoption_final.rda")
 
 # Define UI for application that draws a histogram
@@ -12,7 +14,7 @@ ui <- dashboardPage( # creates the dashboard layout
     
     dashboardSidebar(
       sidebarMenu(
-      menuItem("Home", tabName = "homepage")
+      menuItem("Home", tabName = "homepage"),
       menuItem("Component Data", tabName = "Components",
                menuSubItem("Top Components", tabName = "top"),
                menuSubItem("Component Totals", tabName = "totals")), # edits the dashboard sidebar. allows for menuItems and menuSubitems
@@ -151,7 +153,7 @@ server <- function(input, output) {
   })
   
   products_versions <- reactive({
-    products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version, pf_data$date), FUN = sum)
+    products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version_grep, pf_data$date), FUN = sum)
     names(products_versions) <- c("product", "version", "date", "imports")
     products_versions
   })
