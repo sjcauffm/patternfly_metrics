@@ -18,7 +18,8 @@ ui <- dashboardPage( # creates the dashboard layout
       menuItem("Product Data", tabName = "Products",
                menuSubItem("Component Diversity Current", tabName = "diverse"),
                menuSubItem("Component Diversity Trends", tabName = "divtrend"),
-               menuSubItem("Product Imports of Components", tabName = "products_port")),
+               menuSubItem("Product Imports of Components", tabName = "products_port"),
+               menuSubItem("Product Imports by Version", tabName = "versions")),
       menuItem("Raw Data", tabName = "Raw Data"))),
    
      dashboardBody( # edits the body of the dashboard.
@@ -60,12 +61,22 @@ ui <- dashboardPage( # creates the dashboard layout
                 fluidRow(
                   plotOutput("prod_port")
                 )),
+        tabItem(tabName = "versions",
+                h1("Changes in Product Imports Split by PatternFly Version"),
+                p("This plot is similar to the trends on overall product imports plot, but here the data is broken down by the number of imports for both versions of PatternFly. This gives us a
+                  sense of how products are adopting or converting to PatternFly 4 over PatternFly 3."),
+                fluidRow(
+                  box(plotOutput("prod_vers"))
+                )),
         tabItem(tabName = "Raw Data"))
 )
 )
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+
+##### Preparing data subsets for all plots.   
   
+#preparing top components data
   top_data <- reactive({
     components_totals <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = sum)
     components_mean <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = mean)
@@ -82,6 +93,7 @@ server <- function(input, output) {
     components_totals
   })
   
+#preparing component trends data. 
   components <- reactive({
     components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component, pf_data$date), FUN = sum)
     names(components_sum) <- c("component", "date", "imports") 
@@ -91,7 +103,8 @@ server <- function(input, output) {
     components_sum$date <- temp$date
     components_sum
   })
-  
+
+#preparing diversity data
   diversity <- reactive({
     current <- grep("2019-07-26", pf_data$date)
     diversity <- pf_data[current,]
@@ -100,13 +113,15 @@ server <- function(input, output) {
     names(diversity_df) <- c("product", "components")
     diversity_df
   })
-  
+
+#preparing diversity trends data. 
   div_trend <- reactive({
     trends <- as.data.frame(table(pf_data$product, pf_data$date))
     names(trends) <- c("product", "date", "diversity")
     trends
   })
-  
+
+#preparing products/portfolios data
   products_portfolios <- reactive({
     products <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$date), FUN = sum)
     names(products) <- c("product", "date", "import")
@@ -129,9 +144,13 @@ server <- function(input, output) {
     products
   })
   
+  products_versions <- reactive({
+    products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version, pf_data$date), FUN = sum)
+    names(products_versions) <- c("product", "version", "date", "imports")
+    products_versions
+  })
   
-  
-  
+##### Plotting
   output$totals <- renderPlot({
     ggplot(components(), aes(x = component, y = imports, fill = date)) +
     geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_tufte() +
@@ -173,13 +192,25 @@ server <- function(input, output) {
   
   output$prod_port <- renderPlot({
     ggplot(products_portfolios(), aes(x = date, y = import, group = portfolio, color = portfolio)) +
-      geom_point() + geom_line(stat = "identity") + theme_linedraw() + facet_wrap(~products$product) +
+      geom_point() + geom_line(stat = "identity") + theme_linedraw() + 
+      facet_wrap(~product_portfolios()$product) +
       theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
             text = element_text(family = "Red Hat Display")) +
       scale_y_continuous(limits = c(0, 250)) +
       scale_color_manual(values = c("#73BCF7" ,"#72767B", "#0066CC")) +
       labs(x = "Date", y = "Imports", 
            title = "Imports of PatternFly Components by Product Over Time", color = "Portfolio")
+  })
+  
+  output$prod_vers <- renderPlot({
+   ggplot(products_versions(), aes(x = date, y = imports, group = version, color = version)) +
+      geom_point() + geom_line(stat = "identity") + facet_wrap(~products_versions()$product) + 
+      theme_linedraw() +
+      theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
+            text = element_text(family = "Red Hat Display")) + scale_y_continuous(limits = c(0, 250)) + 
+      scale_color_manual(values = c("#72767B", "#0066CC")) +
+      labs(x = "Date", y = "Imports", 
+           title = "Imports of PatternFly Components by Product Over Time", color = "PatternFly Version")
   })
 
 }
