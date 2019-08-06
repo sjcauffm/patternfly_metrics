@@ -162,7 +162,7 @@ server <- function(input, output) {
   output$totals <- renderPlot({
     ggplot(components(), aes(x = component, y = imports, fill = date)) +
     geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_tufte() +
-    scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,300), 
+    scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200), 
                                                             breaks = c(0,50,100,150,200,250,300)) +
     scale_fill_manual(values = c("2019-06" = "#72767B", "2019-07" = "#0066CC")) +
     theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
