@@ -25,7 +25,7 @@ save(pf_data,
 ## USE "patternfly_adoption_final.rda" for graphing. It has is limited to only components that are from the PatternFly Library ##
 load("/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
 
-current <- grep("2019-07-26", pf_data$date)
+current <- grep("2019-07-30", pf_data$date)
 diversity <- pf_data[current,]
 
 diversity_df <- as.data.frame(table(diversity$product))

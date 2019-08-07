@@ -23,13 +23,13 @@ ui <- dashboardPage( # creates the dashboard layout
                menuSubItem("Component Diversity Trends", tabName = "divtrend"),
                menuSubItem("Product Imports of Components", tabName = "products_port"),
                menuSubItem("Product Imports by Version", tabName = "versions")),
-      menuItem("Raw Data", tabName = "Raw Data"))),
+      menuItem("Raw Data", tabName = "data"))),
    
      dashboardBody( # edits the body of the dashboard.
       tabItems(
         tabItem(tabName = "homepage",
                 h1("PatternFly Adoption Metrics and Trends"),
-                p("This dashboard displays the usage of PatternFly components across the Red Hat portfolio. the sections are divided by metrics associated with components themselves and the products within 
+                p("Welcome! This dashboard displays the usage of PatternFly components across the Red Hat portfolio. the sections are divided by metrics associated with components themselves and the products within 
                   the portfolio. Feel free to click through and see how PF is being used!"),
                 p("NOTE: Due to the nature of product development at Red Hat, this dashboard does not possess data for every single product yet. It will be updated as we obtain more data. ")),
         tabItem(tabName = "Components"),
@@ -76,8 +76,12 @@ ui <- dashboardPage( # creates the dashboard layout
                 fluidRow(
                   plotOutput("prod_vers")
                 )),
-        tabItem(tabName = "Raw Data"))
-)
+        tabItem(tabName = "data",
+        h1("Raw Import Data"),
+        p("This page contains the raw data that were used to produce the plots on this dashboard."),
+        dataTableOutput("raw_data"))
+    )
+  )
 )
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -105,16 +109,12 @@ server <- function(input, output) {
   components <- reactive({
     components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component, pf_data$date), FUN = sum)
     names(components_sum) <- c("component", "date", "imports") 
-    temp <- strsplit(as.character(components_sum$date), "-2")
-    temp <- do.call(rbind.data.frame, temp)
-    names(temp) <- c("date", "extra")
-    components_sum$date <- temp$date
     components_sum
   })
 
 #preparing diversity data
   diversity <- reactive({
-    current <- grep("2019-07-26", pf_data$date)
+    current <- grep("2019-07-30", pf_data$date)
     diversity <- pf_data[current,]
     
     diversity_df <- as.data.frame(table(diversity$product))
@@ -159,30 +159,29 @@ server <- function(input, output) {
   })
   
 ##### Plotting
+  output$top_components <- renderPlot({
+    ggplot(top_data(), aes(x = reorder(component, -imports_prop), y = imports_prop)) + 
+      geom_bar(stat = "identity") + 
+      geom_errorbar(ymin = top_data()$imports_prop - top_data()$margin_error, 
+                    ymax = top_data()$imports_prop + top_data()$margin_error, 
+                    width = .5) +
+      theme_tufte() +
+      theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
+            text = element_text(family = "Red Hat Display")) + 
+      scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .2)) +
+      labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019")}) ## Update the date as needed.
+  
   output$totals <- renderPlot({
     ggplot(components(), aes(x = component, y = imports, fill = date)) +
     geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_tufte() +
     scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200), 
                                                             breaks = c(0,50,100,150,200,250,300)) +
-    scale_fill_manual(values = c("2019-06" = "#72767B", "2019-07" = "#0066CC")) +
+    scale_fill_manual(values = c("2019-06-21" = "#72767B", "2019-06-24" = "#73BCF7", "2019-07-30" = "#0066CC")) +
     theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
           text = element_text(family = "Red Hat Display")) +
     labs(x = "Component", y = "Total Number of Imports", title = "Number of Component Imports per Month", fill = "Date")
   })
-  
-  output$top_components <- renderPlot({
-    ggplot(top_data(), aes(x = reorder(component, -imports_prop), y = imports_prop)) + 
-    geom_bar(stat = "identity") + 
-    geom_errorbar(ymin = top_data()$imports_prop - top_data()$margin_error, 
-                  ymax = top_data()$imports_prop + top_data()$margin_error, 
-                  width = .5) +
-    theme_tufte() +
-    theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
-          text = element_text(family = "Red Hat Display")) + 
-    scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .2)) +
-    labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019")}) ## Update the date as needed.
-    
-    
+
   output$diversity <-  renderPlot({ggplot(diversity(), aes(x = reorder(product, -components), y = components)) +
     geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() + 
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
@@ -220,6 +219,10 @@ server <- function(input, output) {
       labs(x = "Date", y = "Imports", 
            title = "Imports of PatternFly Components by Product Over Time", color = "PatternFly Version")
   })
+  
+  output$raw_data <- renderDataTable({
+    pf_data
+      })
 
 }
 
