@@ -5,7 +5,6 @@ library(ggthemes)
 library(rsconnect)
 
 ### set working directory if it is not already set to this path. 
-setwd("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_dashboard")
 load("patternfly_adoption_final.rda")
 
 # Define UI for application that draws a histogram
@@ -79,6 +78,15 @@ ui <- dashboardPage( # creates the dashboard layout
         tabItem(tabName = "data",
         h1("Raw Import Data"),
         p("This page contains the raw data that were used to produce the plots on this dashboard."),
+        p("X1 is a column that is generated when data are imported from googlesheets and can be ignored."),
+        p("full_component is the full name of the component as it is represented in the .JSON files from each product repository."),
+        p("Imports is the number of imports for that specific component within each product."),
+        p("Product is which product the component is being used by."),
+        p("Date is the date that we obtained that particular data point."),
+        p("version_grep shows which version of patternfly the component belongs to."),
+        p("Component is the short name of the component. Having the shorted name makes it easier to plot to data."),
+        p("is_component shows whether the component belongs to the PatternFly library or npt. The data shown here all belong to the library, but the original import required us to filter 
+          so we only analyzed PF components."),
         dataTableOutput("raw_data"))
     )
   )
