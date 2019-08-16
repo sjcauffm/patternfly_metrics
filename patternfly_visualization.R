@@ -12,8 +12,8 @@ components_sum <- aggregate.data.frame(pf_data$imports, by = list(pf_data$compon
 components_totals <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = sum) ## counts the sum of imports for each component
 components_mean <- aggregate.data.frame(pf_data$imports, by = list(pf_data$component), FUN = mean)
 products <- aggregate.data.frame(pf_data$imports, by = list(pf_data$product), FUN = sum) ## counts the sum of imports for each product, gives total imports for each product
-versions <- aggregate.data.frame(pf_data$imports, by = list(pf_data$version), FUN = sum) ## counts the number of imports by patternfly version
-products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version), FUN = sum) ## counts the number of imports by each product for each patternfly version
+versions <- aggregate.data.frame(pf_data$imports, by = list(pf_data$version_grep), FUN = sum) ## counts the number of imports by patternfly version
+products_versions <- aggregate(pf_data$imports, by = list(pf_data$product, pf_data$version_grep), FUN = sum) ## counts the number of imports by each product for each patternfly version
 
 names(products_versions) <- c("products", "version", "imports")
 

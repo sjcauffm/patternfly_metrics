@@ -31,7 +31,7 @@ split_names2 <- strsplit(imports_split_names$component, "[.]") ## splits the str
 split_names4 <- lapply(split_names2, tail, n = 1L) # the output from split_names2 is in the form of a list of lists with uneven numbers of elements. This command obtains the last subelement of each list element. 
 
 split_names5 <- do.call(rbind.data.frame, split_names4)
-names(split_names5) <- c("component_name")
+names(split_names5) <- c("component_name") 
 
 names_import2 <- cbind(names_import, split_names5)
 

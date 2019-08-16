@@ -28,9 +28,17 @@ ui <- dashboardPage( # creates the dashboard layout
       tabItems(
         tabItem(tabName = "homepage",
                 h1("PatternFly Adoption Metrics and Trends"),
-                p("Welcome! This dashboard displays the usage of PatternFly components across the Red Hat portfolio. the sections are divided by metrics associated with components themselves and the products within 
+                h3("Welcome! This dashboard displays the usage of PatternFly components across the Red Hat portfolio. the sections are divided by metrics associated with components themselves and the products within 
                   the portfolio. Feel free to click through and see how PF is being used!"),
-                p("NOTE: Due to the nature of product development at Red Hat, this dashboard does not possess data for every single product yet. It will be updated as we obtain more data. ")),
+                h3("NOTE: Due to the nature of product development at Red Hat, this dashboard does not possess data for every single product yet. It will be updated as we obtain more data. "),
+                hr(),
+                br(),
+                br(),
+                br(),
+                fluidRow(
+                  column(width = 5, tags$img(src = "redhat_logo.png", height = 300, width = 300)),
+                  column(width = 5, tags$img(src = "redhat_uxd_logo.jpg", height = 300, width = 450, align = "center"))
+                  )),
         tabItem(tabName = "Components"),
         tabItem(tabName ="top",
                 h1("Top Components"),
@@ -39,26 +47,26 @@ ui <- dashboardPage( # creates the dashboard layout
                   are statistically more popular than others."),
                 p("The general rule is if the error bars for each bar don't touch, then the difference is statistically signficiant."),
                 fluidRow(
-                  plotOutput("top_components")
+                  plotOutput("top_components", height = "800px")
                      )),
         tabItem(tabName = "totals",
                 h1("Components Totals"),
                 p("This plot shows the total number of component imports split by date."),
                 fluidRow(
-                  plotOutput("totals")
+                  plotOutput("totals", height = "800px")
                      )),
         tabItem(tabName = "Products"),
         tabItem(tabName = "diverse",
                 h1("Diversity of Components Used by Each Product"),
                 p("This plot shows the number of unique PatternFly components being used by each product within the Red Hat portfolio."),
                 fluidRow(
-                  plotOutput("diversity")
+                  plotOutput("diversity", height = "800px")
                 )),
         tabItem(tabName = "divtrend",
                 h1("Changes in Diversity of PF Components for Each Product Over Time"),
                 p("This plot displays the changes in the number of unique PatternFly components over time."),
                 fluidRow(
-                  plotOutput("div_trend")
+                  plotOutput("div_trend", height = "1000px")
                 )),
         tabItem(tabName = "products_port",
                 h1("Changes in the Number of Imports by Each Product Over Time"),
@@ -66,14 +74,14 @@ ui <- dashboardPage( # creates the dashboard layout
                   product uses, while the number of imports gives us an idea of how much products are implementing the components they are importing. Gathering both metrics gives us a more complete
                   picture of PatternFly usage across the Red Hat Portfolio."),
                 fluidRow(
-                  plotOutput("prod_port")
+                  plotOutput("prod_port", height = "1000px")
                 )),
         tabItem(tabName = "versions",
                 h1("Changes in Product Imports Split by PatternFly Version"),
                 p("This plot is similar to the trends on overall product imports plot, but here the data is broken down by the number of imports for both versions of PatternFly. This gives us a
                   sense of how products are adopting or converting to PatternFly 4 over PatternFly 3."),
                 fluidRow(
-                  plotOutput("prod_vers")
+                  plotOutput("prod_vers", height = "1000px")
                 )),
         tabItem(tabName = "data",
         h1("Raw Import Data"),
@@ -176,7 +184,7 @@ server <- function(input, output) {
       theme_tufte() +
       theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
             text = element_text(family = "Red Hat Display")) + 
-      scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .2)) +
+      scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .21)) +
       labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019")}) ## Update the date as needed.
   
   output$totals <- renderPlot({
