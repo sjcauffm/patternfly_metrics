@@ -2,7 +2,6 @@
 library(tidyverse)
 library(googlesheets)
 library(ggplot2)
-library(chartr)
 
 gs_auth()
 import <- gs_title("patternfly_adoption")

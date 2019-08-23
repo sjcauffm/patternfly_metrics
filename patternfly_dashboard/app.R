@@ -3,6 +3,7 @@ library(shinydashboard)
 library(ggplot2)
 library(ggthemes)
 library(rsconnect)
+library(plotly)
 
 ### set working directory if it is not already set to this path. 
 load("patternfly_adoption_final.rda")
@@ -47,7 +48,7 @@ ui <- dashboardPage( # creates the dashboard layout
                   are statistically more popular than others."),
                 p("The general rule is if the error bars for each bar don't touch, then the difference is statistically signficiant."),
                 fluidRow(
-                  plotOutput("top_components", height = "800px")
+                  plotlyOutput("top_components", height = "800px")
                      )),
         tabItem(tabName = "totals",
                 h1("Components Totals"),
@@ -81,7 +82,7 @@ ui <- dashboardPage( # creates the dashboard layout
                 p("This plot is similar to the trends on overall product imports plot, but here the data is broken down by the number of imports for both versions of PatternFly. This gives us a
                   sense of how products are adopting or converting to PatternFly 4 over PatternFly 3."),
                 fluidRow(
-                  plotOutput("prod_vers", height = "1000px")
+                  plotlyOutput("prod_vers", height = "1000px")
                 )),
         tabItem(tabName = "data",
         h1("Raw Import Data"),
@@ -130,12 +131,13 @@ server <- function(input, output) {
 
 #preparing diversity data
   diversity <- reactive({
-    current <- grep("2019-07-30", pf_data$date)
+    current <- grep("2019-08-16", pf_data$date)
     diversity <- pf_data[current,]
     
     diversity_df <- as.data.frame(table(diversity$product))
     names(diversity_df) <- c("product", "components")
-    diversity_df
+    diversity <- diversity_df
+    diversity
   })
 
 #preparing diversity trends data. 
@@ -175,8 +177,8 @@ server <- function(input, output) {
   })
   
 ##### Plotting
-  output$top_components <- renderPlot({
-    ggplot(top_data(), aes(x = reorder(component, -imports_prop), y = imports_prop)) + 
+  output$top_components <- renderPlotly({
+    temp <- ggplot(top_data(), aes(x = reorder(component, -imports_prop), y = imports_prop)) + 
       geom_bar(stat = "identity") + 
       geom_errorbar(ymin = top_data()$imports_prop - top_data()$margin_error, 
                     ymax = top_data()$imports_prop + top_data()$margin_error, 
@@ -184,8 +186,10 @@ server <- function(input, output) {
       theme_tufte() +
       theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
             text = element_text(family = "Red Hat Display")) + 
-      scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .21)) +
-      labs(x = "Component", y = "Proportion of Total Imports", title = "Top Components as a Proportion of Total Component Imports as of 07-2019")}) ## Update the date as needed.
+      scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0, .21))
+    temp2 <- ggplotly(temp)
+    layout(temp2, xaxis = list(title = "Component"), yaxis = list(title= "Proportion of Total Imports"))
+    }) ## Update the date as needed.
   
   output$totals <- renderPlot({
     ggplot(components(), aes(x = component, y = imports, fill = date)) +
@@ -202,7 +206,7 @@ server <- function(input, output) {
     geom_bar(stat = "identity", position = position_dodge()) + theme_tufte() + 
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
           text = element_text(family = "Red Hat Display")) + 
-    scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,40)) +
+    scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,50)) +
     labs(x = "Product", y = "Number of PF Components", title = "Number of PF Components Used by Each Product")})
   
   output$div_trend <- renderPlot({ggplot(div_trend(), aes(x = date, y = diversity, group = product)) +
@@ -225,15 +229,19 @@ server <- function(input, output) {
            title = "Imports of PatternFly Components by Product Over Time", color = "Portfolio")
   })
   
-  output$prod_vers <- renderPlot({
-   ggplot(products_versions(), aes(x = date, y = imports, group = version, color = version)) +
+  output$prod_vers <- renderPlotly({
+   temp <- ggplot(products_versions(), aes(x = date, y = imports, group = version, color = version)) +
       geom_point() + geom_line(stat = "identity") + facet_wrap(~products_versions()$product) + 
-      theme_linedraw() +
+      theme_bw() +
       theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
-            text = element_text(family = "Red Hat Display")) + scale_y_continuous(limits = c(0, 250)) + 
+            text = element_text(family = "Red Hat Display"),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) + 
+      scale_y_continuous(limits = c(0, 250)) + 
       scale_color_manual(values = c("#72767B", "#0066CC")) +
-      labs(x = "Date", y = "Imports", 
-           title = "Imports of PatternFly Components by Product Over Time", color = "PatternFly Version")
+      labs(title = "Imports of PatternFly Components by Product Over Time", color = "PatternFly Version")
+   temp2 <- ggplotly(temp)
+   layout(temp2, xaxis = list(title = "Date"), yaxis = list(title= "Imports"))
   })
   
   output$raw_data <- renderDataTable({
