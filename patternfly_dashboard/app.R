@@ -196,7 +196,6 @@ server <- function(input, output) {
     geom_bar(stat = "identity", position = position_dodge(preserve = "single")) + theme_tufte() +
     scale_x_discrete(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0), limits = c(0,200), 
                                                             breaks = c(0,50,100,150,200,250,300)) +
-    scale_fill_manual(values = c("2019-06-21" = "#72767B", "2019-06-24" = "#73BCF7", "2019-07-30" = "#0066CC")) +
     theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
           text = element_text(family = "Red Hat Display")) +
     labs(x = "Component", y = "Total Number of Imports", title = "Number of Component Imports per Month", fill = "Date")
