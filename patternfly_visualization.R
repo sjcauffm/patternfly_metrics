@@ -130,6 +130,23 @@ prod_vers_port_plot <- ggplot(prod_vers_port, aes(x = product, y = imports, fill
 ggsave("products_versions_portfolio.png", prod_vers_port_plot, width = 24, height = 16, units = "in")
 
 
+##### Plotting the proportion of PF4 library used. 
+pf4_comp <- pf_data[which(pf_data$version_grep == "PatternFly 4"),]
+pf4_data <- as.data.frame(table(pf4_comp$product, pf4_comp$date))
+
+names(pf4_data) <- c("product", "date", "frequency")
+
+pf4_plot <- ggplot(pf4_data, aes(x = date, y = frequency, group = product)) +
+  geom_line(stat = "identity") + geom_point() +
+  theme_linedraw() + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
+        text = element_text(family = "Red Hat Display")) + 
+  facet_wrap(.~product) + 
+  labs(x = "Date", y = "Number of PF4 Components Used", 
+       title = "Number of PatternFly 4 Components Used by Each Product")
+
+ggsave("pf4_plot.png", pf4_plot, width = 20, height = 16, units = "in")
+
 
 
   
