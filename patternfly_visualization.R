@@ -147,6 +147,15 @@ pf4_plot <- ggplot(pf4_data, aes(x = date, y = frequency, group = product)) +
 
 ggsave("pf4_plot.png", pf4_plot, width = 20, height = 16, units = "in")
 
+### plotting the current snapshot. Adjust the current date as needed
+pf4_current <- pf4_data[which(pf4_data$date == "2019-08-16"),]
 
-
+pf4_current_plot <- ggplot(pf4_current, aes(x = reorder(product, -frequency), y = frequency)) +
+  geom_bar(stat = "identity") + geom_text(label = pf4_current$frequency, vjust = -.2) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1)) +
+  scale_y_continuous(limits = c(0,40)) +
+  labs(x = "Product", y = "Number of PF4 Components", 
+       title = "Current Total of PatthernFly 4 Components Used by Each Product")
+  
+ggsave("pf4_current_plot.png", pf4_current_plot, width = 20, height = 16, units = "in")
   
