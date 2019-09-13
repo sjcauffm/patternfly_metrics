@@ -6,6 +6,7 @@ library(rsconnect)
 library(plotly)
 
 ### set working directory if it is not already set to this path. 
+setwd("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_dashboard")
 load("patternfly_adoption_final.rda")
 
 # Define UI for application that draws a histogram

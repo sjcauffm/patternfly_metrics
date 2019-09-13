@@ -13,10 +13,10 @@ pf_list <- gs_read_csv(import)
 pf_list$Component <- as.character(pf_list$Component)
 pf_list$Component <- tolower(pf_list$Component)
 
-comparison <- data3$component %in% pf_list$Component
-data3$is_component <- comparison
+comparison <- data4$component %in% pf_list$Component
+data4$is_component <- comparison
 
-pf_data <- data3[which(data3$is_component == TRUE),]
+pf_data <- data4[which(data4$is_component == TRUE),]
 save(pf_data, 
      file = "/Volumes/GoogleDrive/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/patternfly_metrics/patternfly_adoption_final.rda")
 
