@@ -167,7 +167,7 @@ server <- function(input, output) {
 
 #preparing diversity data
   diversity <- reactive({
-    current <- grep("2019-09-13", pf_data$date)
+    current <- grep("2019-11-26", pf_data$date)
     diversity <- pf_data[current,]
     
     diversity_df <- as.data.frame(table(diversity$product))
@@ -199,10 +199,11 @@ server <- function(input, output) {
         products$portfolio[i] <- "Hybrid Cloud Infrastructure"
       }
     }
-    temp <- strsplit(as.character(products$date), "-2")
+    temp <- strsplit(as.character(products$date), "-")
     temp <- do.call(rbind.data.frame, temp)
-    names(temp) <- c("date", "extra")
-    products$date <- temp$date
+    names(temp) <- c("date", "extra", "extra2")
+    temp2 <- paste(temp$date, temp$extra, sep = "-")
+    products$date <- temp2
     products
   })
   
@@ -289,12 +290,15 @@ server <- function(input, output) {
       geom_point() + geom_line(stat = "identity") + theme_bw() + 
       facet_wrap(~products_portfolios()$product) +
       theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1),
-            text = element_text(family = "Red Hat Display")) +
+            text = element_text(family = "Red Hat Display"),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) +
       scale_y_continuous(limits = c(0, 250)) +
       scale_color_manual(values = c("#73BCF7" ,"#72767B", "#0066CC")) +
       labs(x = "Date", y = "Imports", 
            title = "Imports of PatternFly Components by Product Over Time", color = "Portfolio")
     temp2 <- ggplotly(temp)
+    layout(temp2, xaxis = list(title = "Date"), yaxis = list(title = "Imports"))
   })
   
   output$prod_vers <- renderPlotly({
