@@ -7,7 +7,7 @@ library(tidyverse)
 dir <- setwd("~/Google Drive File Stream/My Drive/UXD-Share/Usability and User Research/Studies 2019/PatternFly Adoption Visualization/data")
 
 files <- list.files(path = dir) ### gets the list of JSONs from the directory
-files <- files[-51] ### Gets rid of a file that is not a JSON
+files <- files[-76] ### Gets rid of a file that is not a JSON
 import <- lapply(files, fromJSON) ### reads data from all JSONs in directory to a list
 
 dfc <- map_df(files, function(i) {
